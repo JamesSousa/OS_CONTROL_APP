@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Tarefas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ===== BOX ICONS ===== -->
+  <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+  <!-- ===== CSS ===== -->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body id="body-pd">
+  <br>
+  <header class="header" id="header">
+    <div class="header__toggle">
+      <i class='bx bx-menu' id="header-toggle"></i>
+    </div>
+
+    <div class="header__img">
+      <img src="assets/img/perfil.jpg" alt="">
+    </div>
+  </header>
+
+  <div class="l-navbar" id="nav-bar">
+    <nav class="nav">
+      <div>
+        <a href="{% url 'dashboard_sidebar' %}" class="nav__logo">
+          <i class='bx bx-layer nav__logo-icon'></i>
+          <span class="nav__logo-name">OS Control App</span>
+        </a>
+
+        <div class="nav__list">
+          <a href="{% url 'index' %}" class="nav__link active">
+            <i class='bx bx-grid-alt nav__icon'></i>
+            <span class="nav__name">Listar tarefas</span>
+          </a>
+
+          <a href="{% url 'usuarios' %}" class="nav__link">
+            <i class='bx bx-user nav__icon'></i>
+            <span class="nav__name">Usuários</span>
+          </a>
+
+          <a href="{% url 'tarefas' %}" class="nav__link">
+            <i class='bx bx-message-square-detail nav__icon'></i>
+            <span class="nav__name">Nova tarefa</span>
+          </a>
+
+          <a href="#" class="nav__link">
+            <i class='bx bx-bookmark nav__icon'></i>
+            <span class="nav__name">Favorites</span>
+          </a>
+
+          <a href="#" class="nav__link">
+            <i class='bx bx-folder nav__icon'></i>
+            <span class="nav__name">Data</span>
+          </a>
+
+          <a href="#" class="nav__link">
+            <i class='bx bx-bar-chart-alt-2 nav__icon'></i>
+            <span class="nav__name">Gráficos</span>
+          </a>
+        </div>
+      </div>
+      <div class="nav__link">
+        {% block content %}
+        {% if user.is_authenticated %}
+        Olá, {{ user.username }}!
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button class="nav__name"><span class="nav__name">Sair</span></button>
+        </form>
+        {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">Log In</a>
+        {% endif %}
+        {% endblock %}
+      </div>
+      <!--<a href="#" class="nav__link">
+        <i class='bx bx-log-out nav__icon'></i>
+        <span class="nav__name">Log Out</span>
+      </a>-->
+    </nav>
+  </div>
+  <div class="container border bg-light" id="container_label">
+    <div class="text-right">
+
+    </div>
+    <br>
+    <div class="row col-md-12">
+      <br>
+      <div class="col-12"></div>
+      <div class="col-12">
+        <!--INICIO CARD PRINCIPAL-->
+        <div class="card">
+          <div class="card-body">
+            <div class="container">
+              <div class="row row-cols-8">
+                <div class="col">
+                  <div class="card text-white bg-primary mb-2" style="width: 8rem; height: 6rem;">
+                    <div class="card-header text-center">Abertos</div>
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{status_aberto}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card text-white bg-primary mb-2" style="width: 8rem; height: 6rem;">
+                    <div class="card-header text-center">Em espera</div>
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{status_em_espera}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card text-white bg-primary mb-2" style="width: 8rem; height: 6rem;">
+                    <div class="card-header text-center">Em atraso</div>
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{status_em_atraso}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card text-white bg-primary mb-2" style="width: 8rem; height: 6rem;">
+                    <div class="card-header text-center">Pausados</div>
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{status_pausado}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card text-white bg-primary mb-2" style="width: 9rem; height: 6rem;">
+                    <div class="card-header text-center">Não atribuidos</div>
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{status_nao_atribuido}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card text-white bg-primary mb-2" style="width: 9rem; height: 6rem;">
+                    <div class="card-header text-center">Encerram hoje</div>
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{status_encerra_hoje}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card text-white bg-primary mb-2" style="width: 8rem; height: 6rem;">
+                    <div class="card-header text-center">Concluídos</div>
+                    <div class="card-body">
+                      <h5 class="card-title text-center">{{status_concluidos}}</h5>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <br>
+  <br>
+  <div class="input-group" id="pesquisa">
+    <nav class="navbar bg-body-tertiary">
+      <div class="container-fluid">
+        <form class="d-flex" role="pesquisar" action="{% url 'pesquisa_tarefa' %}" method="GET" id="page">
+          <input class="form-control me-2" type="search" aria-label="Search" id="search" name="pesquisa">
+          <button class="btn btn btn-primary" type="submit">Pesquisar</button>
+        </form>
+      </div>
+    </nav>
+  </div>
+  <br>
+
+  <div class="container border bg-light" id="container_image" style="margin: 10px 50px 20px 80;">
+    <br>
+    <div class="row col-md-12">
+      <div class="col-12"></div>
+      <div class="col-12">
+        <!--INICIO CARD PRINCIPAL-->
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>Código</th>
+                  <th>Título</th>
+                  <th>Cliente</th>
+                  <th>Criado em:</th>
+                  <th>Atribuído a:</th>
+                  <th>Status</th>
+                  <th>Prioridade</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+
+              {% for t in todas_as_tarefas %}
+              <tbody id="tabela_tarefas">
+                <tr>
+                  <td>{{t.id}}</td>
+                  <td>{{t.tarefa}}</td>
+                  <td>{{t.cliente}}</td>
+                  <td>{{t.data_cadastro}}</td>
+                  <td>{{t.colaborador}}</td>
+                  <td>{{t.status}}</td>
+                  <td>{{t.prioridade}}</td>
+                  <td>
+                    <div class="btn-group">
+                      <a href="{% url 'tarefa_update' t.id %}">
+                        <button type="button" class="btn btn-warning btn-sm">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path
+                              d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                          </svg>
+                        </button>
+                      </a>
+                      &nbsp;
+                      <a href="{% url 'alerta_excluir' t.id %}" target="_blank" rel="noopener noreferrer">
+                        <button type="button" class="btn btn-danger btn-sm">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path
+                              d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                          </svg>
+                        </button>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <br>
+  </div>
+  </div>
+  <br>
+  <!--===== MAIN JS =====-->
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+<style>
+  #btn_adicionar {
+    position: absolute;
+    top: 5%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+
+  }
+
+  #btn_usuarios {
+    position: absolute;
+    top: 5%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+  }
+
+  #btn_colaborador {
+    position: absolute;
+    top: 11%;
+    left: 13%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+<style>
+  #pesquisa {
+    position: relative;
+    top: 40%;
+    left: 90%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+
+<!--FAZ BUSCA DNAMICA NA TABELA-->
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("#search").on("keyup", function () {
+      var todas_as_tarefas = $(this).val().toLowerCase();
+      $("#tabela_tarefas tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(todas_as_tarefas) > -1)
+      });
+    });
+  });
+</script>
+{% endblock %}
+
+</html>
